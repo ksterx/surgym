@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import tqdm
-from numpy.lib.function_base import gradient
-from numpy.random.mtrand import seed
 
 
 # %%
