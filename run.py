@@ -26,7 +26,7 @@ def parse_args():
 # %%
 def main():
     args = parse_args()
-    xlim = args.length * (args.nx - 1) + 2 * args.space
+    xlim = args.length * (args.nx - 1) / 2 + args.space
     ylim = args.length * (args.ny - 1) + args.space
     obj = Rectangle2D(
         id=1,
@@ -34,17 +34,16 @@ def main():
         length=args.length,
         nx=args.nx,
         ny=args.ny,
-        space=args.space,
         k=args.k,
         c=args.c,
     )
-    viewer = Viewer(xlim, ylim, figsize=(10, 10), dt=args.dt, fmax=args.fmax)
+    viewer = Viewer(xlim, ylim, figsize=(8, 5), dt=args.dt, fmax=args.fmax)
 
     for step in tqdm.trange(args.n_steps):
         if step == 0:
-            viewer.show(obj.pos_flatten, obj.links)
+            viewer.show(obj.pos_flatten, obj.links, step)
         obj.update_physics(dt=args.dt)
-        viewer.show(obj.pos_flatten, obj.links)
+        viewer.show(obj.pos_flatten, obj.links, step)
 
 
 # %%

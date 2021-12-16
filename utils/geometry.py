@@ -164,12 +164,11 @@ class Object:
 
 
 class Rectangle2D(Object):
-    def __init__(self, id, gravity_on, length, nx, ny, space, k, c):
+    def __init__(self, id, gravity_on, length, nx, ny, k, c):
         self.length = length
         self.nx = nx
         self.ny = ny
         self.n_nodes = nx * ny
-        self.space = space
         init_pos_flatten, self.bottom_pos = self._set_initial_position()
         dist_threshold = self._get_dist_threshold()
         super().__init__(
@@ -184,7 +183,7 @@ class Rectangle2D(Object):
 
     def _set_initial_position(self):
         xlist = np.linspace(
-            self.space, self.space + self.length * (self.nx - 1), self.nx
+            -self.length * (self.nx - 1) / 2, self.length * (self.nx - 1) / 2, self.nx
         )
         ylist = np.linspace(0, self.length * (self.ny - 1), self.ny)
         x, y = np.meshgrid(xlist, ylist)
