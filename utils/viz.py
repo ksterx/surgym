@@ -1,6 +1,7 @@
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
-import mpl_toolkits.axes_grid1
 import numpy as np
+import seaborn as sns
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
@@ -14,13 +15,12 @@ class Viewer:
         self.dt = dt
         self.fig = plt.figure(figsize=figsize)
         self.ax = self.fig.add_subplot(111)
+        self.ims = []
 
         # color map
         self.cmap = plt.get_cmap("coolwarm")
         self.cnorm = Normalize(vmin=0, vmax=fmax)
         self.scalar_map = ScalarMappable(norm=self.cnorm, cmap=self.cmap)
-        # divider = mpl_toolkits.axes_grid1.make_axes_locatable(self.ax)
-        # cax = divider.append_axes("right", size="5%", pad=0.05)
         self.fig.colorbar(self.scalar_map)
 
     def show(self, pos_flatten, links: list, step: int):
@@ -41,7 +41,14 @@ class Viewer:
         self.ax.scatter(
             pos_flatten[:, 0], pos_flatten[:, 1], s=20, c="k", marker="o", zorder=2
         )
+        im = [self.ax]
+        self.ims.append(im)
 
         # TODO: add arrows of external force
 
         plt.pause(self.dt)
+
+    def save_gif(self, filename):
+        print("Saving gif...")
+        ani = animation.ArtistAnimation(self.fig, self.ims, interval=1)
+        ani.save(f"output/{filename}.gif", writer="imagemagick")

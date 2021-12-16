@@ -204,6 +204,13 @@ class Rectangle2D(Object):
             # If node is at the bottom, fix it
             if node.id < self.nx:
                 node.update_physics(dt=dt, fix_pos=True)
+            # If node is at the top left corner, apply external force
+            elif node.id == self.nx * (self.ny - 1):
+                f_ext = np.array([0, 10])
+                node.update_physics(dt=dt, f_ext=f_ext)
+            elif node.id == self.n_nodes - 1:
+                f_ext = np.array([0, 10])
+                node.update_physics(dt=dt, f_ext=f_ext)
             else:
                 node.update_physics(dt=dt)
             self.pos_flatten[node.id] = node.pos
