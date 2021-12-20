@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("-k", "--k", type=float, default=40, help="spring constant")
     parser.add_argument("-c", "--c", type=float, default=0.1, help="damping constant")
     parser.add_argument("-g", "--gravity", action="store_true", help="apply gravity")
+    parser.add_argument("-r", "--render", action="store_true", help="render animation")
     parser.add_argument(
         "-fmax",
         "--fmax",
@@ -42,8 +43,7 @@ def parse_args():
 # %%
 def main():
     args = parse_args()
-    xlim = args.length * (args.nx - 1) / 2 + args.space
-    ylim = args.length * (args.ny - 1) + args.space
+    print("Loading objects...")
     obj = Rectangle2D(
         id=1,
         gravity_on=args.gravity,
@@ -53,18 +53,25 @@ def main():
         k=args.k,
         c=args.c,
     )
-    viewer = Viewer(xlim, ylim, figsize=(8, 5), dt=args.dt, fmax=args.fmax)
 
+    create_viewer = args.render or args.save_gif
+
+    if create_viewer:
+        viewer = Viewer(args, (15, 4))
+
+    print("Simulating...")
     for step in tqdm.trange(args.n_steps):
-        if step == 0:
-            viewer.show(obj.pos_flatten, obj.links, step)
+        if create_viewer and step == 0:
+            viewer.show(obj, step)
         obj.update_physics(dt=args.dt)
-        viewer.show(obj.pos_flatten, obj.links, step)
+        if create_viewer:
+            viewer.show(obj, step)
 
     if args.save_gif:
-        viewer.save_gif("test")
+        viewer.save_gif("output/test.gif")
 
 
 # %%
 if __name__ == "__main__":
     main()
+    print("Done.")

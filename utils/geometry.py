@@ -19,6 +19,7 @@ class Node:
             self.g = 9.81
         else:
             self.g = 0
+        self.f_ext = np.zeros(self.dim)  # external force (N)
 
     def is_neighbor(self, node, dist_threshold):
         """Check if a node is within a certain distance from this node at initial position"""
@@ -32,12 +33,12 @@ class Node:
             self.force = np.zeros(self.dim)
         else:
             self.f_ext = f_ext
-            self.force = self._apply_force()
+            self.force = self.apply_force()
             self.acc = self.force / self.mass
             self.vel += self.acc * dt
             self.pos += self.vel * dt
 
-    def _apply_force(self):
+    def apply_force(self):
         self.f_link = np.zeros(self.dim)
         self.f_g = self.mass * np.array([0, -self.g])  # TODO: 2d or 3d
         for link in self.connected_links:
@@ -49,20 +50,6 @@ class Node:
                 raise ValueError("Node id not found in link")
 
         return self.f_link + self.f_g + self.f_ext
-
-
-class Node3D(Node):
-    def __init__(self, pos, vel, acc, mass, id):
-        self.mass = mass  # mass (kg)
-        self.id = id  # unique id
-
-        self.update(pos, vel, acc)
-
-    def is_neighbor(self, node, dist_threshold):
-        return super().is_neighbor(node, dist_threshold)
-
-    def update(self, pos, vel, acc):
-        super().update(pos, vel, acc)
 
 
 class Link:
@@ -149,7 +136,7 @@ class Object:
         self.pos_flatten = init_pos_flatten
         assert self.pos_flatten.shape[1] == dim  # 2d or 3d
         self.n_nodes = self.pos_flatten.shape[0]
-        self.masses = [1 for _ in range(self.n_nodes)]  # TODO: mass
+        self.masses = [0.01 for _ in range(self.n_nodes)]  # TODO: mass
 
         register_nodes()
         register_links()
@@ -159,8 +146,6 @@ class Object:
         for node in self.nodes:
             node.update_physics(dt=dt)
             self.pos_flatten[node.id] = node.pos
-
-            # TODO: apply external force at edge nodes
 
 
 class Rectangle2D(Object):
@@ -206,14 +191,17 @@ class Rectangle2D(Object):
                 node.update_physics(dt=dt, fix_pos=True)
             # If node is at the top left corner, apply external force
             elif node.id == self.nx * (self.ny - 1):
-                f_ext = np.array([0, 10])
+                f_ext = np.array([-0, 0])
                 node.update_physics(dt=dt, f_ext=f_ext)
             elif node.id == self.n_nodes - 1:
-                f_ext = np.array([0, 10])
+                f_ext = np.array([0, 0])
                 node.update_physics(dt=dt, f_ext=f_ext)
             else:
                 node.update_physics(dt=dt)
             self.pos_flatten[node.id] = node.pos
 
-    def is_bottom(self, node):
-        node.id < self.nx
+    def find_topleft_node(self):
+        return self.nodes[self.nx * (self.ny - 1)]
+
+    def find_topright_node(self):
+        return self.nodes[self.n_nodes - 1]
