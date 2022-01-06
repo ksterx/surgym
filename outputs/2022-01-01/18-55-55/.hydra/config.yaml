@@ -1,0 +1,16 @@
+sim:
+  gravity_on: false
+  n_steps: 100
+  dt: 0.01
+viewer:
+  render: true
+  save_gif: false
+  space: 2
+  fmax: 10
+obj:
+  name: rect2d
+  nx: 3
+  ny: 3
+  k: 20
+  c: 0.1
+  length: 1.0
