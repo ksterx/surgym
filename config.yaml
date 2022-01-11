@@ -11,8 +11,8 @@ viewer:
 
 obj:
   name: "rect2d" # name of the object: "rect2d" / "rect3d"
-  nx: 3
-  ny: 3
+  nx: 5
+  ny: 5
   k: 20
   c: 0.1
   length: 1.0

@@ -74,7 +74,7 @@ class Node:
                 self.force = self._apply_force()
                 self.acc = self.force / self.mass
                 k1v = self.acc = self.force / self.mass
-                k1p =
+                # k1p =
 
                 raise NotImplementedError
             else:
@@ -245,10 +245,10 @@ class Rectangle2D(Object):
                 node.update_physics(dt=dt, fix_pos=True)
             # If node is at the top left corner, apply external force
             elif node.id == self.nx * (self.ny - 1):
-                f_ext = np.array([-10, 10])
+                f_ext = np.array([-70, 70])
                 node.update_physics(dt=dt, f_ext=f_ext)
             elif node.id == self.n_nodes - 1:
-                f_ext = np.array([10, 10])
+                f_ext = np.array([70, 70])
                 node.update_physics(dt=dt, f_ext=f_ext)
             else:
                 node.update_physics(dt=dt)
