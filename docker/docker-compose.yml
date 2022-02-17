@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ksterx/surgym20
-    container_name: surgym20
+    image: ksterx/surgym
+    container_name: surgym
     volumes:
       - ../:/workspace
       - /tmp/.X11-unix:/tmp/.X11-unix

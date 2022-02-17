@@ -17,24 +17,23 @@ RUN apt-get update \
     libglfw3-dev \
     libgles2-mesa-dev \
     wget \
-    && apt-get autoremove -y \
-    && apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp
+SHELL ["/bin/bash", "-c"]
 
 RUN wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh \
     && bash Anaconda3-2021.11-Linux-x86_64.sh -b -p /opt/anaconda3 \
     && rm Anaconda3-2021.11-Linux-x86_64.sh
 
-ENV PATH /opt/anaconda3/bin:$PATH
-
 ARG ENV_NAME=softgym
 COPY environment.yml .
 
-RUN pip install -U pip \
-    && conda update -n base -c defaults conda \
-    &&conda env create -n ${ENV_NAME} -f environment.yml \
-    && conda init \
-    && echo "conda activate ${ENV_NAME}" >> ~/.bashrc
+RUN pip install --upgrade pip \
+    && conda update -n base -c defaults conda && \
+    conda env create -n ${ENV_NAME} -f environment.yml && \
+    conda init && \
+    echo "conda activate ${ENV_NAME}" >> ~/.bashrc
 
 ENV CONDA_DEFAULT_ENV ${ENV_NAME}
 ENV PATH /opt/conda/envs/${ENV_NAME}/bin:$PATH
